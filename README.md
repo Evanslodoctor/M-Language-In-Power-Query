@@ -14,9 +14,9 @@ let
     variableName = expression
 in
     variableName
-Example
-m
-Copy code
+```
+### Example
+```m
 let
     SalesAmount = 1000,
     Tax = SalesAmount * 0.16,
@@ -69,7 +69,7 @@ M language provides several operators to perform calculations, comparisons, and 
 and : Logical AND
 or : Logical OR
 not : Logical NOT
-Example
+#### Example
 ```m
 let
     a = 10,
