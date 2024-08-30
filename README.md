@@ -157,3 +157,127 @@ in
 ```
 ## 10. Conclusion
 Understanding M language is crucial for efficiently using Power Query to prepare and transform data. With knowledge of variables, operators, functions, and error handling, you can unlock the full potential of data manipulation in Power Query.
+
+# Creating Columns and Adding Data Using M Language in Power Query
+
+## 1. **Creating a New Column**
+
+In Power Query, you can create a new column using the `Table.AddColumn` function. This function takes three parameters:
+- The table you want to add the column to.
+- The name of the new column.
+- The function that defines the values for the new column.
+
+### **Syntax**
+```m
+Table.AddColumn(table as table, columnName as text, columnGenerator as function) as table
+Example 1: Adding a Calculated Column
+Suppose you have a table with columns Price and Quantity, and you want to add a new column Total that calculates the total price.
+
+m
+Copy code
+let
+    Source = Table.FromRecords({
+        [Product = "A", Price = 100, Quantity = 2],
+        [Product = "B", Price = 150, Quantity = 3]
+    }),
+    AddTotalColumn = Table.AddColumn(Source, "Total", each [Price] * [Quantity])
+in
+    AddTotalColumn
+```
+In this example, the Table.AddColumn function creates a new column Total by multiplying the values of Price and Quantity.
+
+### Example 2: Adding a Conditional Column
+You can also add a column based on a condition. For instance, let's add a column Category based on the Price:
+
+```m
+let
+    Source = Table.FromRecords({
+        [Product = "A", Price = 100],
+        [Product = "B", Price = 150],
+        [Product = "C", Price = 50]
+    }),
+    AddCategoryColumn = Table.AddColumn(Source, "Category", each if [Price] > 100 then "Premium" else "Standard")
+in
+    AddCategoryColumn
+```
+In this example, the Category column will have "Premium" for products with a price greater than 100 and "Standard" otherwise.
+
+### 2. Adding Multiple Columns
+You can add multiple columns by chaining Table.AddColumn functions together.
+
+### Example: Adding Multiple Columns
+Let's add two new columns: DiscountedPrice (10% discount) and FinalPrice (total price after discount).
+
+```m
+let
+    Source = Table.FromRecords({
+        [Product = "A", Price = 100, Quantity = 2],
+        [Product = "B", Price = 150, Quantity = 3]
+    }),
+    AddDiscountColumn = Table.AddColumn(Source, "DiscountedPrice", each [Price] * 0.9),
+    AddFinalPriceColumn = Table.AddColumn(AddDiscountColumn, "FinalPrice", each [DiscountedPrice] * [Quantity])
+in
+    AddFinalPriceColumn
+```
+Here, we first add the DiscountedPrice column and then the FinalPrice column, which depends on the value of DiscountedPrice.
+
+### 3. Adding Static Data to a New Column
+If you want to add a column with the same value for every row, you can simply use a constant expression.
+
+### Example: Adding a Static Column
+Let's add a column Country with a static value "Kenya".
+
+```m
+let
+    Source = Table.FromRecords({
+        [Product = "A", Price = 100],
+        [Product = "B", Price = 150]
+    }),
+    AddCountryColumn = Table.AddColumn(Source, "Country", each "Kenya")
+in
+    AddCountryColumn
+```
+In this example, the Country column will have "Kenya" as its value for all rows.
+
+### 4. Renaming Columns
+After adding columns, you might want to rename them using the Table.RenameColumns function.
+
+## Syntax
+```m
+Table.RenameColumns(table as table, renames as list) as table
+```
+### Example: Renaming a Column
+Let's rename the Price column to UnitPrice.
+
+```m
+let
+    Source = Table.FromRecords({
+        [Product = "A", Price = 100],
+        [Product = "B", Price = 150]
+    }),
+    RenamePriceColumn = Table.RenameColumns(Source, {{"Price", "UnitPrice"}})
+in
+    RenamePriceColumn
+```
+### 5. Removing Columns
+You can remove unwanted columns using the Table.RemoveColumns function.
+
+### Syntax
+```m
+Table.RemoveColumns(table as table, columns as list) as table
+```
+### Example: Removing a Column
+Let's remove the Quantity column from a table.
+
+```m
+let
+    Source = Table.FromRecords({
+        [Product = "A", Price = 100, Quantity = 2],
+        [Product = "B", Price = 150, Quantity = 3]
+    }),
+    RemoveQuantityColumn = Table.RemoveColumns(Source, {"Quantity"})
+in
+    RemoveQuantityColumn
+```
+### 6. Conclusion
+Creating and manipulating columns in Power Query using M Language provides a flexible way to transform your data. By understanding the functions for adding, renaming, and removing columns, you can tailor your data model to meet specific requirements.
